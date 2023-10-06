@@ -9,28 +9,15 @@ const scene = new THREE.Scene()
 
 // add objects to the scene
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 'red' })
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true })
 
 
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
-cubeMesh.position.y = -1
-const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
-cubeMesh2.position.x = 2
-const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial)
-cubeMesh3.position.x = -2
 
-const group = new THREE.Group()
-group.add(cubeMesh)
-group.add(cubeMesh2)
-group.add(cubeMesh3)
-
-group.position.y = 2
-
-scene.add(group)
-// scene.add(cubeMesh)
+scene.add(cubeMesh)
 
 const axesHelper = new THREE.AxesHelper(2)
-scene.add(axesHelper)
+cubeMesh.add(axesHelper)
 
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
@@ -65,8 +52,22 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
+
+// initialize clock 
+const clock = new THREE.Clock()
+let previousTime = 0
+
 // render the scene
 const renderloop = () => {
+  const currentTime = clock.getElapsedTime()
+  const delta = currentTime - previousTime
+  previousTime = currentTime
+
+  cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * delta * 20
+  //cubeMesh.scale.x = (Math.sin(currentTime)) + 2
+  cubeMesh.position.x = (Math.sin(currentTime)) + 2
+
+  controls.update()
   controls.update(); renderer.render(scene, camera);
   window.requestAnimationFrame(renderloop)
 }
